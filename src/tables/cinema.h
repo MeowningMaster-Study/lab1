@@ -1,3 +1,6 @@
+#ifndef _CINEMA_
+#define _CINEMA_
+
 #include "../table.h"
 
 typedef struct {
@@ -29,7 +32,7 @@ void select_cinema(unsigned id) {
     t_indexes indexes = cinema_table.dumps.indexes;
     int index_offset = find_index(indexes, meta->size, id);
     if (index_offset == -1) {
-        printf("error: no such cinema\n");
+        printf("no such cinema!\n");
         return;
     }
     t_index select_index = indexes[index_offset];
@@ -41,7 +44,7 @@ void select_cinema(unsigned id) {
 void update_cinema(unsigned id) {
     int index_offset = find_index(cinema_table.dumps.indexes, cinema_table.dumps.meta.size, id);
     if (index_offset == -1) {
-        printf("error: no such cinema\n");
+        printf("no such cinema!\n");
         return;
     }
     t_index update_index = cinema_table.dumps.indexes[index_offset];
@@ -52,9 +55,15 @@ void update_cinema(unsigned id) {
 void delete_cinema(unsigned id) {
     int index_offset = find_index(cinema_table.dumps.indexes, cinema_table.dumps.meta.size, id);
     if (index_offset == -1) {
-        printf("error: no such cinema\n");
+        printf("no such cinema!\n");
         return;
     }
     t_index delete_index = cinema_table.dumps.indexes[index_offset];
     delete_row(&cinema_table, delete_index.offset, index_offset, sizeof(t_cinema));
 }
+
+void stats_cinema() {
+    stats_table(&cinema_table);
+}
+
+#endif

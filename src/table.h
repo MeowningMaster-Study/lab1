@@ -30,6 +30,7 @@ t_table create_table(char* file_name) {
     table.dumps.meta.size = 0;
     table.dumps.indexes = malloc_indexes();
     save_meta(table.files.meta, &table.dumps.meta);
+    printf("%s\n", file_name);
     return table;
 }
 
@@ -40,6 +41,7 @@ t_table load_table(char* file_name) {
     table.files.indexes = open_indexes(file_name, 0);
     table.dumps.meta = load_meta(table.files.meta);
     table.dumps.indexes = load_indexes(table.files.indexes, table.dumps.meta.size);
+    printf("%s\n", file_name);
     return table;
 }
 
@@ -111,7 +113,7 @@ void delete_row(t_table* table, unsigned offset, unsigned index_offset, size_t d
         // update indexes
         int last_item_index_offset = find_index(indexes, meta->size, last_item_id);
         if (last_item_index_offset == -1) {
-            printf("internal error: last item has no index\n");
+            printf("last item has no index!\n");
             return;
         }
         update_index(indexes_file, indexes, last_item_index_offset, offset);
@@ -125,6 +127,21 @@ void delete_row(t_table* table, unsigned offset, unsigned index_offset, size_t d
 
     meta->size -= 1;
     save_meta(table->files.meta, meta);
+}
+
+void stats_table(t_table* table) {
+    t_meta* meta = &table->dumps.meta;
+    t_indexes indexes = table->dumps.indexes;
+    printf("size: %u\n", meta->size);
+    printf("next id: %u\n", meta->counter);
+    if (meta->size > 0) {
+        printf("indexes:");
+        size_t i;
+        for (i = 0; i < meta->size; i += 1) {
+            printf(" %u", indexes[i].id);
+        }
+        printf("\n");
+    }
 }
 
 #endif

@@ -1,5 +1,8 @@
-#include "../date_time.h"
+#ifndef _FILM_
+#define _FILM_
+
 #include "../table.h"
+#include "../date_time.h"
 
 typedef struct {
     unsigned id;
@@ -31,7 +34,7 @@ t_film read_film() {
 void print_film(t_film* film) {
     printf("title: %s\n", film->title);
     printf("description: %s\n", film->description);
-    printf("release date ");
+    printf("release date: ");
     print_date(film->release_date);
     printf("\n");
     printf("length: %u\n", film->length);
@@ -48,7 +51,7 @@ void select_film(unsigned id) {
     t_indexes indexes = film_table.dumps.indexes;
     int index_offset = find_index(indexes, meta->size, id);
     if (index_offset == -1) {
-        printf("error: no such film\n");
+        printf("no such film!\n");
         return;
     }
     t_index select_index = indexes[index_offset];
@@ -60,7 +63,7 @@ void select_film(unsigned id) {
 void update_film(unsigned id) {
     int index_offset = find_index(film_table.dumps.indexes, film_table.dumps.meta.size, id);
     if (index_offset == -1) {
-        printf("error: no such film\n");
+        printf("no such film!\n");
         return;
     }
     t_index update_index = film_table.dumps.indexes[index_offset];
@@ -71,9 +74,15 @@ void update_film(unsigned id) {
 void delete_film(unsigned id) {
     int index_offset = find_index(film_table.dumps.indexes, film_table.dumps.meta.size, id);
     if (index_offset == -1) {
-        printf("error: no such film\n");
+        printf("no such film!\n");
         return;
     }
     t_index delete_index = film_table.dumps.indexes[index_offset];
     delete_row(&film_table, delete_index.offset, index_offset, sizeof(t_film));
 }
+
+void stats_film() {
+    stats_table(&film_table);
+}
+
+#endif

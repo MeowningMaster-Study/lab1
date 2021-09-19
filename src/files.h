@@ -29,7 +29,6 @@ FILE* open_file(char* file_name, int create) {
     if (create) {
         atc[0] = 'w';
     };
-    printf("%s\n", path);
     FILE* res = fopen(path, atc);
     free(path);
     return res;

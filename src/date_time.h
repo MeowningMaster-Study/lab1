@@ -26,22 +26,35 @@ t_date read_date() {
     return res;
 }
 
-t_time read_time() {
-    t_time res;
-    printf("(hh:mm): ");
-    scanf("%u:%u", &res.hours, &res.minutes);
-    return res;
-}
-
 t_date_time read_date_time() {
     t_date_time res;
     printf("(dd/mm/yyyy hh:mm): ");
-    scanf("%u/%u/%u %u:%u", &res.date.day, &res.date.month, &res.date.year, &res.time.hours, &res.time.minutes);
+    int dd, mm, yy, h, m;
+    scanf(
+        "%d/%d/%d %d:%d",
+        &dd, &mm, &yy, &h, &m
+    );
+    res.date.day = dd;
+    res.date.month = mm;
+    res.date.year = yy;
+    res.time.hours = h;
+    res.time.minutes = m;
     return res;
 }
 
 void print_date(t_date date) {
     printf("%u/%u/%u", date.day, date.month, date.year);
+}
+
+void print_date_time(t_date_time date_time) {
+    printf(
+        "%u/%u/%u %u:%u",
+        date_time.date.day,
+        date_time.date.month,
+        date_time.date.year,
+        date_time.time.hours,
+        date_time.time.minutes
+    );
 }
 
 #endif
