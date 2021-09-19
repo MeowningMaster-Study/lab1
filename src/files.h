@@ -15,7 +15,7 @@ char CATEGORY_FILE[] = "category";
 char FILM_CATEGORY_FILE[] = "film_category";
 
 char* get_path(char* file_name) {
-    char* path = malloc(256);
+    char* path = (char*)malloc(256);
     strcpy(path, DATABASE_FOLDER);
     strcat(path, file_name);
     strcat(path, ".hex");

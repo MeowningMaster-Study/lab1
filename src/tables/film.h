@@ -5,15 +5,15 @@ typedef struct {
     unsigned id;
     char title[64];
     char description[256];
-    date release_date;
+    t_date release_date;
     unsigned length;
     unsigned short rating;
-} film;
+} t_film;
 
-table film_table;
+t_table film_table;
 
-film read_film() {
-    film res;
+t_film read_film() {
+    t_film res;
     printf("title: ");
     scanf("\n");
     gets(res.title);
@@ -28,7 +28,7 @@ film read_film() {
     return res;
 }
 
-void print_film(film* film) {
+void print_film(t_film* film) {
     printf("title: %s\n", film->title);
     printf("description: %s\n", film->description);
     printf("release date ");
@@ -39,39 +39,41 @@ void print_film(film* film) {
 }
 
 void insert_film() {
-    film new_film = read_film();
-    insert_row(&film_table, &new_film, sizeof(film));
+    t_film new_film = read_film();
+    insert_row(&film_table, &new_film, sizeof(t_film));
 }
 
 void select_film(unsigned id) {
-    int index_offset = find_index(&film_table.dumps.indexes, film_table.dumps.meta.size, id);
+    t_meta* meta = &film_table.dumps.meta;
+    t_indexes indexes = film_table.dumps.indexes;
+    int index_offset = find_index(indexes, meta->size, id);
     if (index_offset == -1) {
         printf("error: no such film\n");
         return;
     }
-    index select_index = film_table.dumps.indexes.data[index_offset];
-    film* selected_film = (film*)select_row(&film_table, select_index.offset, sizeof(film));
+    t_index select_index = indexes[index_offset];
+    t_film* selected_film = (t_film*)select_row(&film_table, select_index.offset, sizeof(t_film));
     print_film(selected_film);
     free(selected_film);
 }
 
 void update_film(unsigned id) {
-    int index_offset = find_index(&film_table.dumps.indexes, film_table.dumps.meta.size, id);
+    int index_offset = find_index(film_table.dumps.indexes, film_table.dumps.meta.size, id);
     if (index_offset == -1) {
         printf("error: no such film\n");
         return;
     }
-    index update_index = film_table.dumps.indexes.data[index_offset];
-    film new_film = read_film();
-    update_row(&film_table, update_index.offset, &new_film, sizeof(film));
+    t_index update_index = film_table.dumps.indexes[index_offset];
+    t_film new_film = read_film();
+    update_row(&film_table, update_index.offset, &new_film, sizeof(t_film));
 }
 
 void delete_film(unsigned id) {
-    int index_offset = find_index(&film_table.dumps.indexes, film_table.dumps.meta.size, id);
+    int index_offset = find_index(film_table.dumps.indexes, film_table.dumps.meta.size, id);
     if (index_offset == -1) {
         printf("error: no such film\n");
         return;
     }
-    index delete_index = film_table.dumps.indexes.data[index_offset];
-    delete_row(&film_table, delete_index.offset, sizeof(film));
+    t_index delete_index = film_table.dumps.indexes[index_offset];
+    delete_row(&film_table, delete_index.offset, index_offset, sizeof(t_film));
 }

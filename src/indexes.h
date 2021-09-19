@@ -1,36 +1,45 @@
+#ifndef _INDEXES_
+#define _INDEXES_
+
 #include "files.h"
 
 typedef struct {
     unsigned id;
     unsigned offset;
-} index;
+} t_index;
 
-typedef struct {
-    index data[1024];
-} indexes_dump;
+typedef t_index* t_indexes;
 
-indexes_dump load_indexes(FILE* file) {
+t_indexes malloc_indexes() {
+    return malloc(1024 * sizeof(t_index));
+}
+
+t_indexes load_indexes(FILE* file, unsigned indexes_size) {
     fseek(file, 0, SEEK_SET);
-    indexes_dump indexes;
-    fread(&indexes, sizeof(indexes_dump), 1, file);
+    t_indexes indexes = malloc_indexes();
+    fread(indexes, indexes_size * sizeof(t_index), 1, file);
     return indexes;
 }
 
-void insert_index(FILE* file, unsigned offset, index* data) {
-    fseek(file, offset * sizeof(index), SEEK_SET);
-    fwrite(data, sizeof(index), 1, file);
+void insert_index(FILE* file, t_indexes indexes, unsigned offset, t_index new_index) {
+    // insert to dump
+    indexes[offset] = new_index;
+
+    // insert to file
+    fseek(file, offset * sizeof(t_index), SEEK_SET);
+    fwrite(&new_index, sizeof(t_index), 1, file);
     fflush(file);
 }
 
-int find_index(indexes_dump* dump, unsigned indexes_size, unsigned id) {
+int find_index(t_indexes indexes, unsigned indexes_size, unsigned id) {
     if (indexes_size == 0) {
         return -1;
     }
-    index* indexes = dump->data;
+
     unsigned l = 0, r = indexes_size, m;
     while (l < r) {
         m = (l + r) / 2;
-        if (indexes[m].id <= id) {
+        if (id <= indexes[m].id) {
             r = m;
         } else {
             l = m + 1;
@@ -42,6 +51,29 @@ int find_index(indexes_dump* dump, unsigned indexes_size, unsigned id) {
     return l;
 }
 
-void update_index(FILE* file, indexes_dump* dump, unsigned indexes_size, unsigned new_offset) {
-
+void update_index(FILE* file, t_indexes indexes, unsigned offset, unsigned new_item_offset) {
+    // update dump
+    indexes[offset].offset = new_item_offset;
+    
+    // update file
+    fseek(file, offset * sizeof(t_index) + sizeof(unsigned), SEEK_SET); // seek to offset field
+    fwrite(&new_item_offset, sizeof(unsigned), 1, file);
+    fflush(file);
 }
+
+void delete_index(FILE* file, t_indexes indexes, unsigned indexes_size, unsigned offset) {
+    // update dump
+    size_t i = offset, j = offset + 1;
+    while (j < indexes_size) {
+        indexes[i] = indexes[j];
+        i += 1;
+        j += 1;
+    }
+
+    // update file
+    fseek(file, offset * sizeof(t_index), SEEK_SET);
+    fwrite(indexes + offset, sizeof(t_index), indexes_size - offset - 1, file);
+    fflush(file);
+}
+
+#endif
