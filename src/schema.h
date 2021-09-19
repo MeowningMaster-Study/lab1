@@ -1,45 +1,36 @@
-#include <time.h>
+#include "date_time.h"
 
-struct film {
-    unsigned id;
-    char title[64];
-    char description[1024];
-    time_t release_date;
-    unsigned length;
-    unsigned short rating;
-};
-
-struct session {
+typedef struct {
     unsigned id;
     unsigned movie_id;
     unsigned cinema_id;
-    time_t start_time;
-};
+    date_time start;
+} session;
 
-struct cinema {
+typedef struct {
     unsigned id;
     char name[64];
-};
+} cinema;
 
-struct actor {
+typedef struct {
     unsigned id;
     char first_name[64];
     char last_name[64];
-};
+} actor;
 
-struct film_actor {
+typedef struct {
     unsigned id;
     unsigned film_id;
     unsigned actor_id;
-};
+} film_actor;
 
-struct category {
+typedef struct {
     unsigned id;
     char name[64];
-};
+} category;
 
-struct film_category {
+typedef struct {
     unsigned id;
     unsigned film_id;
     unsigned category_id;
-};
+} film_category;
