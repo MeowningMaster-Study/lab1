@@ -10,7 +10,7 @@ void select();
 void update();
 void delete();
 void stats();
-void count();
+void subcount();
 void subselect();
 
 void create_tables();
@@ -52,8 +52,8 @@ int main() {
             delete();
         } else if (!strcmp(command, "stats")) {
             stats();
-        } else if (!strcmp(command, "count")) {
-            count();
+        } else if (!strcmp(command, "subcount")) {
+            subcount();
         } else if (!strcmp(command, "subselect")) {
             subselect();
         }
@@ -148,7 +148,7 @@ void stats() {
     }
 }
 
-void count() {
+void subcount() {
     char table[256], by[256];
     unsigned id;
     scanf("%s %s %d", table, by, &id);
