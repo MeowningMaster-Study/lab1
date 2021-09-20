@@ -158,6 +158,36 @@ void count_sessions_by_cinema(unsigned cinema_id) {
     printf("sessions in this cinema: %d\n", counter);
 }
 
+void select_sessions_by_film(unsigned film_id) {
+    t_meta* meta = &session_table.dumps.meta;
+    t_indexes indexes = session_table.dumps.indexes;
+    size_t i;
+    for (i = 0; i < meta->size; i += 1) {
+        unsigned offset = indexes[i].offset;
+        t_session* selected_session = (t_session*)select_row(&session_table, offset, sizeof(t_session));
+        if (selected_session->film_id == film_id) {
+            printf("// session %d\n", indexes[i].id);
+            print_session(selected_session);
+        }
+        free(selected_session);
+    }
+}
+
+void select_sessions_by_cinema(unsigned cinema_id) {
+    t_meta* meta = &session_table.dumps.meta;
+    t_indexes indexes = session_table.dumps.indexes;
+    size_t i;
+    for (i = 0; i < meta->size; i += 1) {
+        unsigned offset = indexes[i].offset;
+        t_session* selected_session = (t_session*)select_row(&session_table, offset, sizeof(t_session));
+        if (selected_session->cinema_id == cinema_id) {
+            printf("// session %d\n", indexes[i].id);
+            print_session(selected_session);
+        }
+        free(selected_session);
+    }
+}
+
 void stats_session() {
     stats_table(&session_table);
 }

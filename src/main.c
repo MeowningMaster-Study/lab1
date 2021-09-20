@@ -11,6 +11,7 @@ void update();
 void delete();
 void stats();
 void count();
+void subselect();
 
 void create_tables();
 void load_tables();
@@ -53,6 +54,8 @@ int main() {
             stats();
         } else if (!strcmp(command, "count")) {
             count();
+        } else if (!strcmp(command, "subselect")) {
+            subselect();
         }
     }
 }
@@ -155,6 +158,20 @@ void count() {
             count_sessions_by_film(id);
         } else if (!strcmp(by, "cinema")) {
             count_sessions_by_cinema(id);
+        }
+    }
+}
+
+void subselect() {
+    char table[256], by[256];
+    unsigned id;
+    scanf("%s %s %d", table, by, &id);
+
+    if (!strcmp(table, "session")) {
+        if (!strcmp(by, "film")) {
+            select_sessions_by_film(id);
+        } else if (!strcmp(by, "cinema")) {
+            select_sessions_by_cinema(id);
         }
     }
 }
